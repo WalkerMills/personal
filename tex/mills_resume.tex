@@ -1,0 +1,220 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Mills Resume/CV
+%
+% Modification of Friggeri Resume/CV for software engineering
+%
+% Author:
+% Walker Mills (walker.mills7@gmail.com)
+%
+% Based on:
+%
+%    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    % Friggeri Resume/CV
+%    % XeLaTeX Template
+%    % Version 1.0 (5/5/13)
+%    %
+%    % This template has been downloaded from:
+%    % http://www.LaTeXTemplates.com
+%    %
+%    % Original author:
+%    % Adrien Friggeri (adrien@friggeri.net)
+%    % https://github.com/afriggeri/CV
+%    %
+%    % License:
+%    % CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%    %
+%    % Important notes:
+%    % This template needs to be compiled with XeLaTeX and the bibliography, if used,
+%    % needs to be compiled with biber rather than bibtex.
+%    %
+%    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[]{mills-cv} % Add 'print' as an option into the square bracket to remove colors from this template for printing
+
+
+\begin{document}
+
+\header{walker}{mills}{software engineer} % Your name and current job title/field
+
+%----------------------------------------------------------------------------------------
+%	SIDEBAR SECTION
+%----------------------------------------------------------------------------------------
+
+\begin{aside} % In the aside, each new line forces a line break
+\section{contact}
+MSC 767
+Pasadena, CA 91126
+(209) 450-6531
+\small walker.mills7@gmail.com
+bit.ly/WalkerMills
+\section{languages}
+spanish (fluent)
+\section{programming}
+\textbf{advanced:}
+C, C++, MySQL,
+(C)Python, Cython
+Haskell, Linux/Unix
+Bash/Zsh
+\textbf{proficient:}
+PostgreSQL,
+Pyrex, Java
+NuoDB, Lisp
+Erlang, IA32
+\section{technologies}
+Django, Thrift,
+Protocol Buffers,
+NewSQL, NoSQL
+Android, Sage
+Chromium
+\section{tools}
+GCC/G++, Make
+SWIG, GDB, Git
+Gerrit, ADB
+SSH/Mosh
+\end{aside}
+
+%----------------------------------------------------------------------------------------
+%	EDUCATION SECTION
+%----------------------------------------------------------------------------------------
+
+\section{education}
+
+\begin{entrylist}
+%------------------------------------------------
+\entry
+{2012--2016}
+{Bachelor of Computer Science \normalfont -- California Institute of Technology}{}{}
+%------------------------------------------------
+\end{entrylist}
+
+%----------------------------------------------------------------------------------------
+%	WORK EXPERIENCE SECTION
+%----------------------------------------------------------------------------------------
+
+\section{experience}
+
+\begin{entrylist}
+%------------------------------------------------
+\entry
+{Summer 2013}
+{Amazon Lab126}
+{Sunnyvale, California}
+{\emph{Software Development Engineer Intern} \\
+Improved video streaming performance for Amazon WebView, a fork of Chromium, and worked on related video streaming projects for Amazon's Kindle Fire HDX devices. (NDA) \\
+Detailed achievements:
+\begin{itemize}
+\item Learned how to incorporate version control into my daily work flow.
+\item Taught my co-workers how Chromium's multimedia internals work.
+\begin{itemize}
+\item Examined the Chromium source code to determine (and document) how the multimedia internals worked.
+\item Traced method calls on production devices to constructed a hierarchical representation of control flow through WebView's multimedia internals under Chromium's multi-threaded, asynchronous architecture.
+\end{itemize}
+\end{itemize}}
+%------------------------------------------------
+\end{entrylist}
+
+%----------------------------------------------------------------------------------------
+%   PROJECTS SECTION
+%----------------------------------------------------------------------------------------
+\section{projects}
+
+\begin{entrylist}
+%------------------------------------------------
+\entry
+{January 2014}
+{CryptoBot}
+{}
+{\emph{Cryptocurrency trading platform and algorithmic trading bot engine} \\
+CryptoBot provides users a unified trading desk and an easy interface to create algorithmic trading bots for supported cryptocurrencies. \\
+Responsibilities:
+\begin{itemize}
+\item I lead design and development of backend systems, application framework, and general middleware
+\begin{itemize}
+\item I designed and implemented libraries to run, provide user management for, and distribute efficiently on a computing cluster, autonomous trading bots (written in C++) running on our servers from Python, based on user requests sent from Django via a Cython interface using Apache Thrift
+\item I built the NuoDB-backed Django user authentication into our bot libraries, so that bots are capable of securely making automatic trades
+\end{itemize}
+\item I am the administrator for our production servers, databases, and repositories
+\end{itemize}
+}
+
+\entry
+{}
+{BatStats}
+{}
+{\emph{Battery widget using Linux kernel headers}
+\begin{itemize}
+\item Written in C; uses Linux kernel headers to query power supply state
+\item If discharging, in addition to time until empty, displays the estimated total battery life, given current capacity
+\begin{itemize}
+\item More intuitive heuristic upon which to judge battery performance
+\end{itemize}
+\item If charging, in addition to time until charge is complete, displays the estimated time of completion, and the day of the week if that time crosses the date line
+\end{itemize}
+\emph{Hackathons}
+\begin{itemize}
+\item Google 24 Hours of Good - LA (November 2012), LA Hacks (April 2013), \\ Hacktech (January 2014)
+\end{itemize}}
+%------------------------------------------------
+\end{entrylist}
+
+
+%----------------------------------------------------------------------------------------
+%	COURSES SECTION
+%----------------------------------------------------------------------------------------
+
+\section{courses}
+
+\begin{entrylist}
+%------------------------------------------------
+\entry
+{}
+{California Institute of Technology}
+{}
+{\emph{Courses:}
+\begin{itemize}
+\item \emph{CS 21}: Decidability and Tractability; topics include exploring the fundamental limits of (efficient) computation
+\item \emph{CS 24}: Computer Systems; topics include hardware-software interface, computer architecture, and operating systems
+\item \emph{CS 121}: Relational Databases, with extensive hands-on work with SQL databases
+\item \emph{CS 90}: Research (CryptoBot); I am developing algorithmic trading strategies for cryptocurrencies like Bitcoin, with the goal of creating functional autonomous algorithmic cryptocurrency trading bots, with Prof. Adam Wierman
+\item \emph{CS 11}: Project (CryptoBot); I am building a (live) production ready algorithmic cryptocurrency trading and botting platform
+\item \emph{CS/EE 145}: Projects in Networking (CryptoBot); building on my CS 90 research, I am creating and testing (with actual currency) algorithmic trading bots
+\item \emph{Ma/CS 6a}: Graph theory, algorithms, and combinatorics, as well as topics from cryptography, including Hamming codes and RSA
+\item \emph{CS 101c}: Taught in Haskell, this course explores (pure) functional programming
+\item \emph{CS 11}: Computer language workshop (C, C++)
+
+\end{itemize}}
+%------------------------------------------------
+\end{entrylist}
+
+%----------------------------------------------------------------------------------------
+%	COMMUNICATION SKILLS SECTION
+%----------------------------------------------------------------------------------------
+
+\section{communication skills}
+
+\begin{entrylist}
+%------------------------------------------------
+\entry
+{2008-2012}
+{Speech \& Debate}
+{Team Captain}
+{Successfully competed in public speaking and debate events at league and charity tournaments at the state and national level.}
+\entry
+{Summer 2013}
+{Lab126 "Brown Bag" Presentation}
+{Information and QA session}
+{Presented details of my work and relevant systems to co-workers over the course of an informal lunch session, followed by a period of questions.}
+%------------------------------------------------
+\end{entrylist}
+
+%----------------------------------------------------------------------------------------
+%	INTERESTS SECTION
+%----------------------------------------------------------------------------------------
+
+\section{interests}
+
+\textbf{professional:} leadership training, backend/framework development, metaprogramming, automation, distributed systems, real-time databases, information security, C-level systems programming, functional programming \textbf{personal:} long-distance running, cooking, metallurgy, Aikido, fencing, archery, marksmanship, (three cushion) billiards, hiking, backpacking, whitewater rafting
+
+\end{document}

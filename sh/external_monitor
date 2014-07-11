@@ -1,0 +1,16 @@
+#!/bin/bash
+
+IN="LVDS1"
+EXT="HDMI1"
+ 
+if (xrandr | grep "$EXT disconnected"); then
+    xrandr --output $IN --auto --output $EXT --off 
+    xset +dpms
+    xset s on
+else
+    xrandr --output $IN --auto --primary --output $EXT --auto --left-of $IN
+    xset -dpms
+    xset s off
+fi
+
+
