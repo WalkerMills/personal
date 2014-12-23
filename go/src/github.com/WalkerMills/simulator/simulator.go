@@ -1,3 +1,11 @@
 package main
 
-// TODO: write main loop
+import (
+    "runtime"
+)
+
+func main() {
+    runtime.GOMAXPROCS(runtime.NumCPU())
+
+    // TODO: write CLI
+}
