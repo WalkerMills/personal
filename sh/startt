@@ -1,0 +1,27 @@
+#! /bin/sh
+
+if which tmux 2>&1 > /dev/null && [[ $TERM != screen ]]
+then
+    if tmux -q has-session -t 0 2>/dev/null
+    then
+        i=1
+        while tmux -q has-session -t $i 2>/dev/null
+        do
+            ((++i))
+	done
+	tmux new-session -d -s $i
+        tmux -2 attach-session -t $i
+    else
+        tmux new-session -d -s 0
+        tmux new-window -t 0:1 -n "ncmpcpp" ncmpcpp
+        tmux split-window -h -p 50 -t 0:1.0 alsamixer
+        tmux new-window -t 0:2 -n 'scripting' ipython2
+        tmux split-window -h -p 50 -t 0:2.0 ghci
+        tmux split-window -v -p 50 -t 0:2.0 ipython
+        tmux select-window -t 0:2
+        tmux select-pane -t 0
+        tmux new-window -t 0:3 -n "sys" htop
+        tmux select-window -t 0:0
+        tmux -2 attach-session -t 0
+    fi
+fi

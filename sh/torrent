@@ -1,0 +1,14 @@
+#! /bin/zsh
+
+torrent_dir=~/downloads/torrents
+
+scp "$1" tardis-desktop:$torrent_dir
+rm "$1"
+ssh tardis-desktop "tmux send-keys -t 0:0 enter"
+ssh tardis-desktop "tmux send-keys -t 0:0 '${torrent_dir}/`basename $1`'"
+ssh tardis-desktop "tmux send-keys -t 0:0 enter"
+ssh tardis-desktop "tmux send-keys -t 0:0 4"
+ssh tardis-desktop "tmux send-keys -t 0:0 down" 
+ssh tardis-desktop "tmux send-keys -t 0:0 C-s" 
+ssh tardis-desktop "tmux send-keys -t 0:0 8" 
+

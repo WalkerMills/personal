@@ -21,7 +21,7 @@
 #define SMALL 120
 
 // Number of elements that trigger insertion sort from quicksort by default
-#define CHUNK 16
+#define CHUNK 100
 
 // If there are more than SMOOTH elements when introsort reaches maximum
 // recursion depth, use smoothsort; otherwise, use shellsort
@@ -42,9 +42,9 @@ typedef uint8_t gap_t;
 // Struct for holding the sizes of existing heaps
 typedef struct {
     // Sizes of existing heaps (right shifted so that the last bit is a 1)
-    uint32_t mask;
+    uint64_t mask;
     // Size of the smallest heap (mask << offset == unshifted mask)
-    uint16_t offset;
+    uint32_t offset;
 } heapsize_t;
 
 
@@ -208,7 +208,7 @@ namespace sort {
 
     // In-place insertion sort on the elements in the range [first, last)
     template<typename T>
-    inline void insertion_sort(T start, T stop) {
+    void insertion_sort(T start, T stop) {
         T left, right, center;
         unsigned step;
 
@@ -254,13 +254,13 @@ namespace sort {
 
     // In-place insertion sort on all the elements in the container
     template<typename T>
-    inline void insertion_sort(T &input) {
+    void insertion_sort(T &input) {
         sort::insertion_sort(input.begin(), input.end());
     }
 
     // In-place insertion sort on the first n elements of the input array
     template<typename T>
-    inline void insertion_sort(T *input, unsigned size) {
+    void insertion_sort(T *input, unsigned size) {
         sort::insertion_sort(input, input + size);
     }
 
@@ -281,19 +281,19 @@ namespace sort {
     }
 
     template<typename T>
-    inline void shellsort(T start, T stop) {
+    void shellsort(T start, T stop) {
         for ( uint8_t i = 0; i < num_gaps; ++i ) {
             sort::phase(start, stop, sort::gaps[i]);
         }
     }
 
     template<typename T>
-    inline void shellsort(T &input) {
+    void shellsort(T &input) {
         sort::shellsort(input.begin(), input.end());
     }
 
     template<typename T>
-    inline void shellsort(T *input, unsigned size) {
+    void shellsort(T *input, unsigned size) {
         sort::shellsort(input, input + size);
     }
 
@@ -475,7 +475,7 @@ namespace sort {
 
     // In-place smoothsort on the elements in the range [start, stop)
     template<typename T>
-    inline void smoothsort(T start, T stop) {
+    void smoothsort(T start, T stop) {
         if ( stop - start < 2 ) return;
 
         heapsize_t size = sort::heapify(start, stop);
@@ -484,7 +484,7 @@ namespace sort {
 
     // In-place smoothsort on all the elements in the container
     template<typename T>
-    inline void smoothsort(T &input) {
+    void smoothsort(T &input) {
         if ( input.size() < 2 ) return;
 
         heapsize_t size = sort::heapify(input.begin(), input.end());
@@ -493,7 +493,7 @@ namespace sort {
 
     // In-place smoothsort sort on all the elements in an array
     template<typename T>
-    inline void smoothsort(T *input, unsigned n) {
+    void smoothsort(T *input, unsigned n) {
         if ( n < 2 ) return;
 
         heapsize_t size = sort::heapify(input, input + n);
@@ -503,7 +503,7 @@ namespace sort {
 
     // Calculate the median of three values
     template<typename T>
-    inline T median(T a, T b, T c) {
+    inline T medianOf3(T a, T b, T c) {
         // Find the maximum of all three elements
         T maximum = std::max(std::max(a, b), c);
 
@@ -514,47 +514,40 @@ namespace sort {
         return a ^ b ^ c ^ minimum ^ maximum;
     }
 
-    // Places the median at the beginning of the range [start, stop)
-    template<typename T>
-    inline void place_median(T start, T stop) {
-        auto pivot = sort::median(*start, 
-                                  *(start + (stop - start) / 2),
-                                  *stop);
-        std::swap(*start, pivot);
-    }
-
     // Calculate Tukey's ninther of nine values
     template<typename T>
     inline T ninther(T a, T b, T c, T d, T e, T f, T g, T h, T i) {
-        T med0 = sort::median(a, b, c);
-        T med1 = sort::median(d, e, f);
-        T med2 = sort::median(g, h, i);
+        T med0 = sort::medianOf3(a, b, c);
+        T med1 = sort::medianOf3(d, e, f);
+        T med2 = sort::medianOf3(g, h, i);
 
-        return sort::median(med0, med1, med2);
-    }
-
-    // Places Tukey's ninther at the beginning of the range [start, stop)
-    template<typename T>
-    inline void place_ninther(T start, T stop) {
-        unsigned n = stop - start;
-        unsigned part = n / 8;
-        T mid = start + n / 2;
-
-        auto pivot = sort::ninther(
-            *start, *(start + part), *(start + part + part), 
-            *(mid - part), *mid, *(mid + part), 
-            *(stop - 1 - part - part), *(stop - 1 - part), *(stop - 1));
-        std::swap(*start, pivot);
+        return sort::medianOf3(med0, med1, med2);
     }
 
     // Places pivot at the beginning of the range [start, stop)
     template<typename T>
     inline void place_pivot(T start, T stop) {
-        if ( stop - start <= SMALL ) {
-            sort::place_median(start, stop);
+        unsigned n = stop - start;
+        auto pivot = *start;
+
+        if ( n <= SMALL ) {
+            // Find the median of the first, middle, and last elements of
+            // small ranges
+            pivot = sort::medianOf3(*start, *(start + n / 2), *(stop - 1));
         } else {
-            sort::place_ninther(start, stop);
+            int part = n / 8;
+            T mid = start + n / 2;
+
+            // Compute Tukey's ninther
+            pivot = sort::ninther(
+                *start, *(start + part), *(start + part + part), 
+                *(mid - part), *mid, *(mid + part), 
+                *(stop - 1 - part - part), *(stop - 1 - part), *(stop - 1));
         }
+
+        // Swap it to the beginning of the range
+        std::swap(*start, pivot);
+
     }
 
     template<typename T>
@@ -618,7 +611,7 @@ namespace sort {
     // In-place quicksort on the elements in the range [start, stop), with the
     // given chunk size
     template<typename T>
-    inline void quicksort(T start, T stop, unsigned chunk) {
+    void quicksort(T start, T stop, unsigned chunk) {
         // Make a stack for holding pairs of iterators representing the
         // non-inclusive range [first, second)
         std::stack<std::pair<T, T>> st;
@@ -652,19 +645,19 @@ namespace sort {
 
     // In-place quicksort on the elements in the range [start, stop)
     template<typename T>
-    inline void quicksort(T start, T stop) {
+    void quicksort(T start, T stop) {
         sort::quicksort(start, stop, CHUNK);
     }
 
     // In-place quicksort on all the elements in the container
     template<typename T>
-    inline void quicksort(T &input) {
+    void quicksort(T &input) {
         sort::quicksort(input.begin(), input.end(), CHUNK);
     }
 
     // In-place quicksort on the first n elements of the input array
     template<typename T>
-    inline void quicksort(T *input, unsigned n) {
+    void quicksort(T *input, unsigned n) {
         sort::quicksort(input, input + n, CHUNK);
     }
 
@@ -686,7 +679,7 @@ namespace sort {
 
     // In-place (parallel) quicksort on the elements in the range [start, stop)
     template<typename T>
-    inline void parallel_quicksort(T start, T stop) {
+    void parallel_quicksort(T start, T stop) {
         sort::parallel_quicksort(start, stop, THREADS);
     }
 
@@ -694,7 +687,7 @@ namespace sort {
     // In-place introsort on the elements in the range [start, stop) with
     // parametrized depth 
     template<typename T>
-    inline void introsort(T start, T stop, unsigned depth) {
+    void introsort(T start, T stop, unsigned depth) {
         // Make a stack for holding pairs of iterators representing the
         // non-inclusive range [first, second)
         std::stack<std::pair<T, T>> *st = new std::stack<std::pair<T, T>>();
@@ -741,19 +734,19 @@ namespace sort {
 
     // In-place introsort on the elements in the range [start, stop)
     template<typename T>
-    inline void introsort(T start, T stop) {
+    void introsort(T start, T stop) {
         sort::introsort(start, stop, DEPTH(stop - start));
     }
 
     // In-place introsort on the input container
     template<typename T>
-    inline void introsort(T &input) {
+    void introsort(T &input) {
         sort::introsort(input.begin(), input.end(), DEPTH(input.size()));
     }
 
     // In-place introsort on the first n elements of the input array
     template<typename T>
-    inline void introsort(T *input, unsigned n) {
+    void introsort(T *input, unsigned n) {
         sort::introsort(input, input + n, DEPTH(n));
     }
 
@@ -776,7 +769,7 @@ namespace sort {
 
     // In-place (parallel) introsort on the elements in the range [start, stop)
     template<typename T>
-    inline void parallel_introsort(T start, T stop) {
+    void parallel_introsort(T start, T stop) {
         sort::parallel_introsort(start, stop, THREADS);
     }
 }

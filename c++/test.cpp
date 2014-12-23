@@ -1,8 +1,7 @@
-#include <fstream>
 #include <iostream>
-#include <sstream>
-#include <string>
+#include <fstream>
 #include <map>
+#include <random>
 #include <cstdlib>
 #include <ctime>
 
@@ -20,6 +19,42 @@ unsigned **gen_arrays(unsigned samples, unsigned size) {
 
         for ( unsigned j = 0; j < size; ++j ) {
             arr[j] = rand() % (size * 10);
+        }
+
+        arrays[i] = arr;
+    }
+
+    return arrays;
+}
+
+float **gen_arrays(unsigned samples, unsigned size) {
+    float **arrays = new float*[samples];
+
+    srand(time(NULL));
+    for ( unsigned i = 0; i < samples; ++i ) {
+        float *arr = new float[size];
+
+        for ( unsigned j = 0; j < size; ++j ) {
+            arr[j] = (float)( ((double) rand() / (double) RAND_MAX) * 
+                              ((double) rand() / (double) RAND_MAX) );
+        }
+
+        arrays[i] = arr;
+    }
+
+    return arrays;
+}
+
+double **gen_arrays(unsigned samples, unsigned size) {
+    double **arrays = new double*[samples];
+    std::default_random_engine gen;
+    std::uniform_real_distribution<double> dist(0.0, 1.0);
+
+    for ( unsigned i = 0; i < samples; ++i ) {
+        double *arr = new double[size];
+
+        for ( unsigned j = 0; j < size; ++j ) {
+            arr[j] = dist(gen);
         }
 
         arrays[i] = arr;
@@ -47,31 +82,38 @@ std::vector<unsigned> *gen_vectors(unsigned samples, unsigned size) {
 
 int main(int argc, char **argv) {
     std::map<char *, array_fp> const sorts = {
-        {"std::sort", &std::sort<unsigned *>},
-        {"std::stable_sort", &std::stable_sort<unsigned *>},
-        // {"sort::insertion_sort", &sort::insertion_sort<unsigned *>},
-        // {"sort::shellsort", &sort::shellsort<unsigned *>},
-        // {"sort::smoothsort", &sort::smoothsort<unsigned *>},
-        // {"sort::quicksort", &sort::quicksort<unsigned *>},
-        // {"sort::introsort", &sort::introsort<unsigned *>},
-        // {"sort::parallel_quicksort", &sort::parallel_quicksort<unsigned *>},
-        // {"sort::parallel_introsort", &sort::parallel_introsort<unsigned *>},
+        {"std::sort", &std::sort},
+        {"std::stable_sort", &std::stable_sort},
+        // {"sort::insertion_sort", &sort::insertion_sort},
+        // {"sort::shellsort", &sort::shellsort},
+        {"sort::smoothsort", &sort::smoothsort},
+        {"sort::quicksort", &sort::quicksort},
+        {"sort::introsort", &sort::introsort},
+        {"sort::parallel_quicksort", &sort::parallel_quicksort},
+        {"sort::parallel_introsort", &sort::parallel_introsort},
         // {"gfx::timsort", &gfx::timsort}
     };
-    
-    char *name;
-    array_fp fp;
 
-    for ( std::map<char *, array_fp>::const_iterator it = sorts.begin(); it != sorts.end(); ++it ) {
-        name = it->first;
-        fp = it->second;
-        std::cout << name << std::endl;
+    for ( std::map<char *, array_fp>::const_iterator it = sorts.begin();
+          it != sorts.end(); ++it ) {
+        std::ofstream ofs(it->first);
+        std::cout << it->first << ':' << std::endl;
 
-        for ( unsigned i = 100; i <= SIZE; i += 100 ) {
-            std::pair<int, double> res = 
-                benchmark<unsigned>(SAMPLES, i, fp);
-            std::cout << i << ' ' << res.first << ' ' << res.second << std::endl;
+        for ( unsigned i = 10; i <= SIZE; i *= 10 ) {
+            unsigned samples = SIZE / i;
+
+            std::pair<double, double> res = benchmark<float>(samples, i, 
+                                                             it->second);
+
+            ofs << i << ", " << res.first << ", " res.second << std::endl; 
         }
+
+        ofs.close();
+        // std::cout << res.first << " elements per microsecond, standard "
+        //              "deviation of " << res.second 
+        //           << " (" << 100 * res.second / res.first << "%) for "
+        //           << SAMPLES << " samples of " << SIZE << " elements"
+        //           << std::endl << std::endl;
     }
 
     return 0;

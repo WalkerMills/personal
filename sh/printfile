@@ -1,0 +1,16 @@
+#! /bin/sh
+
+print_dir=/tmp/printing
+
+if [[ -f "$1" ]]
+then
+    scp "$1" tardis-desktop:$print_dir
+    filename=`basename "$1" | sed 's/ /\\\ /g'`
+    echo $filename
+    echo ${print_dir}/${filename}
+    ssh tardis-desktop lp -o outputorder=reverse "${print_dir}/${filename}"
+    ssh tardis-desktop rm "${print_dir}/${filename}"
+else
+    echo "Not a valid file"
+    return 1
+fi
